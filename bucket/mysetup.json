@@ -1,0 +1,41 @@
+{
+    "version": "0.1.0",
+    "description": "Keep your AI agent skills in sync across your computers (preview; not code-signed yet).",
+    "homepage": "https://mysetup.ai",
+    "license": "Proprietary",
+    "notes": [
+        "The mysetup CLI is a preview. Background sync is off until you run: mysetup service enable",
+        "Run 'mysetup doctor' to check your setup. Uninstalling never removes your skills."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://mysetup.ai/cli/releases/0.1.0/mysetup-0.1.0-windows-x86_64.zip",
+            "hash": "df0a19d45ded9abb2457be78dd3ad64b012bd7790713323a6422299d4d0157d6",
+            "extract_dir": "mysetup-0.1.0-windows-x86_64"
+        }
+    },
+    "bin": "mysetup.exe",
+    "post_install": [
+        "& \"$dir\\mysetup.exe\" service start --if-installed --if-owned 2>&1 | Out-Null"
+    ],
+    "pre_uninstall": [
+        "$mysetupAction = if ($cmd -eq 'uninstall') { 'disable' } else { 'stop' }",
+        "& \"$dir\\mysetup.exe\" service $mysetupAction --if-owned 2>&1 | Out-Null"
+    ],
+    "checkver": {
+        "url": "https://mysetup.ai/cli/version",
+        "regex": "^([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://mysetup.ai/cli/releases/$version/mysetup-$version-windows-x86_64.zip",
+                "extract_dir": "mysetup-$version-windows-x86_64",
+                "hash": {
+                    "url": "https://mysetup.ai/cli/releases/$version/SHA256SUMS.txt",
+                    "regex": "$sha256\\s+\\*?$basename"
+                }
+            }
+        }
+    }
+}
